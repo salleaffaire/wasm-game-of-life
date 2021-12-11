@@ -33,7 +33,13 @@ wasm-pack build
 to generate LLVM
 
 ```bash
+RUSTFLAGS="--emit=llvm-ir" wasm-pack build
+```
 
+the output LLVM will be in
+
+```text
+target/wasm32-unknown-unknown/release/deps/
 ```
 
 ### 🔬 Test in Headless Browsers with `wasm-pack test`
@@ -46,6 +52,34 @@ wasm-pack test --headless --firefox
 
 ```bash
 wasm-pack publish
+```
+
+### From C++
+
+CPP -> LLVM-IR
+
+```bash
+clang main.cpp -S -emit-llvm
+```
+
+LLVM-IR -> WASM
+
+```bash
+llc-10 -mtriple=wasm32-unknown-unknown -O3 -filetype=obj main.ll -o main.o
+wasm-ld-10 main.o -o main.wasm --no-entry -allow-undefined --export-all
+```
+
+### Transcoding the LLVM-IR
+
+```bash
+xcode -compiler llvm main.ll  -function_indirection off -light_datatransform_level 100 -controlflowlevel 0 -auto_transforms off -auto_function_transforms off -string_transforms off -o main.cloak.ll
+```
+
+LLVM-IR -> WASM (of the cloaked LLVM)
+
+```bash
+llc-10 -mtriple=wasm32-unknown-unknown -O3 -filetype=obj main.cloak.ll -o main.cloak.o
+wasm-ld-10 main.cloak.o -o main.cloak.wasm --no-entry -allow-undefined --export-all
 ```
 
 ## 🔋 Batteries Included

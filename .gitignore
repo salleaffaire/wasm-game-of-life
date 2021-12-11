@@ -4,3 +4,8 @@ Cargo.lock
 bin/
 pkg/
 wasm-pack.log
+
+/fromC++/*.o
+/fromC++/*.ll
+/fromRust/*.o
+/fromRust/*.ll
